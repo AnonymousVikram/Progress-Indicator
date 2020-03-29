@@ -5,6 +5,7 @@ public class readingTool{
   public static String subject;
   public static int chapNum;
   public static int chapPage;
+  public static long startMillis;
 
   public static void setup(Scanner input){
     System.out.print("\033[H\033[2J");
@@ -19,10 +20,42 @@ public class readingTool{
 		System.out.println("How many pages are there in this chapter?");
 		chapPage = input.nextInt();
 		System.out.print("\033[H\033[2J");
+    startMillis = System.currentTimeMillis()%86400000;
   }
 
+  public static String getTime(){
+    long millisNow = System.currentTimeMillis()%86400000;
+    long hoursNow = (millisNow-millisNow%3600000)/3600000;
+    hoursNow +=8;
+    hoursNow = hoursNow%24;
+    boolean isMorning;
+    String amPm;
+    if(hoursNow<12){
+      isMorning = true;
+      amPm = "am";
+    }else{
+      isMorning = false;
+      amPm = "pm";
+      hoursNow -= 12;
+    }
+    long minutesNow = millisNow%3600000;
+    minutesNow = (minutesNow-minutesNow%60000)/60000;
+    DecimalFormat minuteFormat = new DecimalFormat("##");
+    String finalMinutes = minuteFormat.format(minutesNow);
+
+    String returner = "";
+    returner = returner.concat(Long.toString(hoursNow));
+    returner = returner.concat(":");
+    returner = returner.concat(finalMinutes);
+    returner = returner.concat(" ");
+    returner = returner.concat(amPm);
+
+
+    return returner;
+  }
   public static void printInterface(float i, DecimalFormat df){
     System.out.print("\033[H\033[2J");
+    System.out.println("Time: ".concat(getTime()).concat("\n"));
     System.out.println("Studying: " + subject + " Chapter " + chapNum);
     float percent = i/chapPage*100;
     System.out.println();
